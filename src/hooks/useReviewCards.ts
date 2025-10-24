@@ -35,6 +35,7 @@ export const useReviewCards = () => {
 
     // 1. Pega os dados do idioma e o progresso do aluno
     const languageData = allLanguageData[lang];
+    if (!languageData) return; // <-- ADIÇÃO DA VERIFICAÇÃO
     const { lastLessonCompleted } = getProgress(lang);
 
     // 2. Coleta todos os cards das aulas que já foram completadas

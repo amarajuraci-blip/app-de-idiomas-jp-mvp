@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useReviewCards } from '../hooks/useReviewCards';
 import { completeFirstReview, getProgress, markModule4IntroAsPlayed, markAudio11AsPlayed } from '../utils/progress';
 import { playAudioOnce } from '../utils/audioPlayer';
-import { playFeedbackAudio } from '../utils/feedbackPlayer'; // <-- NOVA IMPORTAÇÃO
+import { playFeedbackAudio } from '../utils/feedbackPlayer';
 
 const Module4Page: React.FC = () => {
   const navigate = useNavigate();
@@ -124,7 +124,7 @@ const Module4Page: React.FC = () => {
           <div className="flex items-center p-2 h-12">
             <img src={`https://flagcdn.com/w40/${lang === 'en' ? 'us' : lang}.png`} alt="Bandeira do Idioma" className="w-8 h-auto mr-3" />
             {isRevealed && (
-              <span className="font-bold text-xl">{currentCard.translation}</span>
+              <span className="font-bold text-xl">{currentCard.translations[lang || '']}</span>
             )}
           </div>
         </div>

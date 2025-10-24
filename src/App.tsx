@@ -13,8 +13,8 @@ import Module4Page from './components/Module4Page';
 import Module5Page from './components/Module5Page';
 import LessonCompletionPage from './components/LessonCompletionPage';
 import ModuleCompletionPage from './components/ModuleCompletionPage';
-import WelcomePage from './components/WelcomePage'; // <-- NOVA IMPORTAÇÃO
-import InitialRouter from './components/InitialRouter'; // <-- NOVA IMPORTAÇÃO
+import WelcomePage from './components/WelcomePage';
+import InitialRouter from './components/InitialRouter';
 
 function App() {
   return (

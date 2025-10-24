@@ -59,33 +59,59 @@ const HomePage: React.FC = () => {
     }
   }, [lang]);
 
+  // --- FUNÇÃO handleModuleClick ATUALIZADA ---
   const handleModuleClick = (moduleId: number) => {
     if (moduleId === 1 && isModule1AudioLocked) return;
     if (moduleId === 2 && isModule2AudioLocked) return;
     if (moduleId === 3 && isModule3AudioLocked) return;
     if (moduleId === 4 && isModule4AudioLocked) return;
     if (moduleId === 5 && isModule5AudioLocked) return;
-    
-    const isUnlocked = progress.unlockedModules.includes(moduleId);
-    if (!isUnlocked) {
-      alert(`Complete o módulo ${moduleId - 1} para desbloquear este!`);
+
+    // Verifica se o módulo está bloqueado pelas regras de progresso
+    const isModuleLocked = !progress.unlockedModules.includes(moduleId);
+    // Verifica se o módulo pertence às sessões avançadas
+    const isAdvancedModule = moduleId > 5;
+
+    if (isModuleLocked) {
+      if (isAdvancedModule) {
+        // Mensagem personalizada para sessões avançadas
+        alert("Você tem que fazer mais aulas da sessão 1 para liberar esses módulos.");
+      } else {
+        // Mensagem padrão para a primeira sessão
+        alert(`Complete o módulo ${moduleId - 1} para desbloquear este!`);
+      }
       return;
     }
 
     const path = `/${lang}/modulo/${moduleId}`;
     navigate(path);
   };
+  // --- FIM DA ATUALIZAÇÃO ---
 
   const handleLogout = () => {
-    supabase.auth.signOut(); 
+    supabase.auth.signOut();
     navigate('/', { replace: true });
   };
 
   const { main: mainModules, advanced: advancedModules, listeningPractice, readingAndWriting } = allLanguageData[lang || 'en'].homePageModules;
-  
-  // AQUI ESTÁ A CORREÇÃO!
-  // Voltamos a verificar o progresso para decidir se mostramos o conteúdo avançado.
+
   const showAdvancedContent = progress.completedReviews[5];
+
+  const getCoverImages = () => {
+    if (lang === 'en') {
+      return {
+        pc: '/images/visual/capa_en_pc.webp',
+        cell: '/images/visual/capa_en_cell.webp',
+      };
+    }
+    const extension = '.webp';
+    return {
+      pc: `/images/capapc/${lang}${extension}`,
+      cell: `/images/capacell/${lang}cell${extension}`,
+    };
+  };
+
+  const coverImages = getCoverImages();
 
   return (
     <div className="min-h-screen bg-black pb-20">
@@ -98,28 +124,22 @@ const HomePage: React.FC = () => {
             <span className="hidden sm:inline">Sair</span>
             </button>
         </div>
+        
         <section className="relative">
-            {lang === 'en' ? (
-                <picture>
+            <picture>
                 <source
                     media="(max-width: 768px)"
-                    srcSet="/images/visual/capa_en_cell.webp"
+                    srcSet={coverImages.cell}
                 />
                 <img
-                    src="/images/visual/capa_en_pc.webp"
+                    src={coverImages.pc}
                     alt="Banner Principal"
                     className="w-full h-[40vh] md:h-[60vh] object-cover"
                 />
-                </picture>
-            ) : (
-                <img
-                src="https://i.imgur.com/ru9WoNh.jpg"
-                alt="Banner Principal"
-                className="w-full h-[40vh] md:h-[60vh] object-cover"
-                />
-            )}
+            </picture>
             <div className="absolute inset-0 bg-black bg-opacity-20"></div>
         </section>
+
         <div className="container mx-auto px-4 py-16 max-w-7xl">
             <section className="mb-12 md:mb-20">
                 <SectionTitle>
@@ -128,9 +148,9 @@ const HomePage: React.FC = () => {
                 <ModuleCarousel
                     modules={mainModules.map(module => ({
                         ...module,
-                        isLocked: !progress.unlockedModules.includes(module.id) || 
-                                  (module.id === 1 && isModule1AudioLocked) || 
-                                  (module.id === 2 && isModule2AudioLocked) || 
+                        isLocked: !progress.unlockedModules.includes(module.id) ||
+                                  (module.id === 1 && isModule1AudioLocked) ||
+                                  (module.id === 2 && isModule2AudioLocked) ||
                                   (module.id === 3 && isModule3AudioLocked) ||
                                   (module.id === 4 && isModule4AudioLocked) ||
                                   (module.id === 5 && isModule5AudioLocked)
