@@ -15,6 +15,7 @@ import LessonCompletionPage from './components/LessonCompletionPage';
 import ModuleCompletionPage from './components/ModuleCompletionPage';
 import WelcomePage from './components/WelcomePage';
 import InitialRouter from './components/InitialRouter';
+import JapaneseQuizPage from './components/JapaneseQuizPage'; // <-- Importe o novo componente
 
 function App() {
   return (
@@ -22,22 +23,29 @@ function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<LoginPage />} />
-        
-        {/* --- NOVAS ROTAS PARA O FLUXO INICIAL --- */}
-        <Route 
-          path="/initial-route" 
-          element={<ProtectedRoute><InitialRouter /></ProtectedRoute>} 
+
+        {/* --- Rotas para o fluxo inicial --- */}
+        <Route
+          path="/initial-route"
+          element={<ProtectedRoute><InitialRouter /></ProtectedRoute>}
         />
-        <Route 
-          path="/bem-vindo" 
-          element={<ProtectedRoute><WelcomePage /></ProtectedRoute>} 
+        <Route
+          path="/bem-vindo"
+          element={<ProtectedRoute><WelcomePage /></ProtectedRoute>}
         />
-        
-        <Route 
-          path="/selecao-idioma" 
-          element={<ProtectedRoute><LanguageSelectionPage /></ProtectedRoute>} 
+
+        <Route
+          path="/selecao-idioma"
+          element={<ProtectedRoute><LanguageSelectionPage /></ProtectedRoute>}
         />
-        
+
+        {/* --- Rota para o Quiz de Japonês --- */}
+        <Route
+          path="/jp/quiz"
+          element={<ProtectedRoute><JapaneseQuizPage /></ProtectedRoute>}
+        />
+
+        {/* --- Rotas dos Cursos por Idioma --- */}
         <Route path="/:lang/home" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
         <Route path="/:lang/modulo/1" element={<ProtectedRoute><Module1Page /></ProtectedRoute>} />
         <Route path="/:lang/modulo/1/aula/:lessonId" element={<ProtectedRoute><LessonPage /></ProtectedRoute>} />
@@ -46,15 +54,16 @@ function App() {
         <Route path="/:lang/modulo/4" element={<ProtectedRoute><Module4Page /></ProtectedRoute>} />
         <Route path="/:lang/modulo/5" element={<ProtectedRoute><Module5Page /></ProtectedRoute>} />
 
-        <Route 
-          path="/:lang/aula-concluida" 
-          element={<ProtectedRoute><LessonCompletionPage /></ProtectedRoute>} 
+        {/* --- Rotas de Conclusão --- */}
+        <Route
+          path="/:lang/aula-concluida"
+          element={<ProtectedRoute><LessonCompletionPage /></ProtectedRoute>}
         />
-
         <Route path="/:lang/modulo/2/concluido" element={<ProtectedRoute><ModuleCompletionPage moduleNumber={2} /></ProtectedRoute>} />
         <Route path="/:lang/modulo/3/concluido" element={<ProtectedRoute><ModuleCompletionPage moduleNumber={3} /></ProtectedRoute>} />
         <Route path="/:lang/modulo/4/concluido" element={<ProtectedRoute><ModuleCompletionPage moduleNumber={4} /></ProtectedRoute>} />
         <Route path="/:lang/modulo/5/concluido" element={<ProtectedRoute><ModuleCompletionPage moduleNumber={5} /></ProtectedRoute>} />
+
       </Routes>
     </Router>
   );
