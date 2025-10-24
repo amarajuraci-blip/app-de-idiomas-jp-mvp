@@ -1,12 +1,11 @@
 import React, { useRef } from 'react';
 import ModuleCard from './ModuleCard';
 
-// A interface foi atualizada para incluir a nova propriedade opcional 'isLocked'
 interface Module {
   id: number;
   title: string;
   imageUrl: string;
-  isLocked?: boolean; 
+  isLocked?: boolean;
 }
 
 interface ModuleCarouselProps {
@@ -19,6 +18,7 @@ const ModuleCarousel: React.FC<ModuleCarouselProps> = ({ modules, sectionType, o
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const scrollLeft = () => {
+    // ... (função scrollLeft continua igual)
     if (scrollContainerRef.current) {
       const scrollAmount = window.innerWidth <= 768 ? -180 : -320;
       scrollContainerRef.current.scrollBy({
@@ -29,6 +29,7 @@ const ModuleCarousel: React.FC<ModuleCarouselProps> = ({ modules, sectionType, o
   };
 
   const scrollRight = () => {
+    // ... (função scrollRight continua igual)
     if (scrollContainerRef.current) {
       const scrollAmount = window.innerWidth <= 768 ? 180 : 320;
       scrollContainerRef.current.scrollBy({
@@ -38,15 +39,19 @@ const ModuleCarousel: React.FC<ModuleCarouselProps> = ({ modules, sectionType, o
     }
   };
 
-  const handleModuleClick = (moduleId: number) => {
-    if (onModuleClick) {
+  const handleModuleClick = (moduleId: number, isLocked?: boolean) => {
+    // --- ALTERAÇÃO AQUI ---
+    // Só chama a função onModuleClick (que vem da HomePage) se o módulo NÃO estiver bloqueado
+    if (!isLocked && onModuleClick) {
       onModuleClick(moduleId);
     }
+    // Se estiver bloqueado, não faz nada.
   };
 
   return (
     <div className="relative">
-      <button
+      {/* Botões de rolagem continuam iguais */}
+       <button
         onClick={scrollLeft}
         className="absolute left-1 md:left-4 top-1/2 transform -translate-y-1/2 z-10 opacity-0 hover:opacity-100 peer-hover:opacity-100 transition-all duration-300 ease-in-out hover:scale-110"
       >
@@ -62,23 +67,27 @@ const ModuleCarousel: React.FC<ModuleCarouselProps> = ({ modules, sectionType, o
       <div ref={scrollContainerRef} className="flex overflow-x-scroll pb-6 scrollbar-hide gap-3 md:gap-6 px-2 md:px-8 lg:px-10 peer">
         <div className="flex gap-3 md:gap-6 min-w-max">
           {modules.map((module) => (
-            <div 
-              key={module.id} 
+            <div
+              key={module.id}
               className="w-40 sm:w-48 md:w-80 flex-shrink-0 group"
-              onClick={() => handleModuleClick(module.id)}
+              // Passa o estado de bloqueio para a função handleModuleClick interna
+              onClick={() => handleModuleClick(module.id, module.isLocked)}
+              // Muda o cursor para indicar se é clicável ou não
+              style={{ cursor: module.isLocked ? 'not-allowed' : 'pointer' }}
             >
               <ModuleCard
                 moduleNumber={module.id}
                 title={module.title}
                 imageUrl={module.imageUrl}
                 sectionType={sectionType}
-                isLocked={module.isLocked} // <-- Passa a informação de bloqueio para o ModuleCard
+                isLocked={module.isLocked}
               />
             </div>
           ))}
         </div>
       </div>
 
+      {/* Gradientes laterais continuam iguais */}
       <div className="absolute left-0 top-0 bottom-6 w-2 md:w-16 lg:w-20 bg-gradient-to-r from-black to-transparent pointer-events-none"></div>
       <div className="absolute right-0 top-0 bottom-6 w-2 md:w-16 lg:w-20 bg-gradient-to-l from-black to-transparent pointer-events-none"></div>
     </div>
