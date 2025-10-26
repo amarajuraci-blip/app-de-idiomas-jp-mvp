@@ -6,27 +6,27 @@ import SectionTitle from './SectionTitle';
 import ModuleCarousel from './ModuleCarousel';
 import { allLanguageData } from '../data/modules';
 import { getProgress, markIntroAsPlayed, markAudio03AsPlayed, markAudio06AsPlayed, markAudio09AsPlayed, markAudio13AsPlayed } from '../utils/progress';
-import WarningModal from './WarningModal'; // 1. Importar WarningModal
+import WarningModal from './WarningModal'; // Importar WarningModal
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const { lang } = useParams<{ lang: string }>();
   const progress = getProgress(lang || 'en'); // Carrega o progresso atual
 
-  // Estados para bloqueio de áudio (mantidos)
+  // Estados para bloqueio de áudio
   const [isModule1AudioLocked, setIsModule1AudioLocked] = useState(false);
   const [isModule2AudioLocked, setIsModule2AudioLocked] = useState(false);
   const [isModule3AudioLocked, setIsModule3AudioLocked] = useState(false);
   const [isModule4AudioLocked, setIsModule4AudioLocked] = useState(false);
   const [isModule5AudioLocked, setIsModule5AudioLocked] = useState(false);
 
-  // 2. Estado para o modal de aviso
+  // Estado para o modal de aviso
   const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
 
-  // Efeito para tocar áudios introdutórios (mantido)
+  // Efeito para tocar áudios introdutórios
   useEffect(() => {
     if (!lang) return;
-    const currentProgress = getProgress(lang); // Re-ler dentro do effect se necessário
+    const currentProgress = getProgress(lang);
 
     const playAndMark = (audioPath: string, markFunction: (lang: string) => void) => {
         try {
@@ -65,7 +65,6 @@ const HomePage: React.FC = () => {
     }
   }, [lang]);
 
-  // 4. Modificar handleModuleClick
   const handleModuleClick = (moduleId: number) => {
     // Verifica bloqueios de áudio para a primeira sessão
     if (moduleId === 1 && isModule1AudioLocked) return;
@@ -76,20 +75,23 @@ const HomePage: React.FC = () => {
 
     const moduleCompleted5 = progress.completedReviews[5]; // Verifica se Módulo 5 foi concluído
 
-    // Verifica se é um módulo avançado (sessões 2, 3, 4)
+    // Verifica se é um módulo avançado (sessões 2, 3, 4 - IDs > 5)
     if (moduleId > 5) {
+      // Se o Módulo 5 NÃO foi concluído (módulo avançado está bloqueado)
       if (!moduleCompleted5) {
-        setIsWarningModalOpen(true); // Abre o modal se Módulo 5 não foi concluído
-        return; // Impede a navegação
+        // O clique já é impedido pelo ModuleCarousel, então não faz nada aqui
+        return;
       }
-      // Se Módulo 5 foi concluído, futuramente adicionar a lógica de navegação aqui
-      // Por enquanto, podemos colocar um alerta ou apenas não fazer nada:
-      alert(`Navegação para o módulo avançado ${moduleId} ainda não implementada.`);
-      return;
+      // Se o Módulo 5 FOI concluído (módulo avançado está desbloqueado e clicável)
+      else {
+        // --- ALTERAÇÃO FEITA AQUI ---
+        setIsWarningModalOpen(true); // Abre o modal de aviso ao invés do alert
+        return; // Impede qualquer outra navegação por enquanto
+      }
     }
 
     // Lógica para módulos da primeira sessão (1-5)
-    const isModuleUnlocked = progress.unlockedModules.includes(moduleId);
+    const isModuleUnlocked = progress.unlockedModules.includes(moduleId); //
     if (!isModuleUnlocked) {
       alert(`Complete o módulo ${moduleId - 1} para desbloquear este!`);
       return;
@@ -101,7 +103,7 @@ const HomePage: React.FC = () => {
   };
 
   const handleLogout = () => {
-    supabase.auth.signOut();
+    supabase.auth.signOut(); //
     navigate('/', { replace: true });
   };
 
@@ -110,12 +112,12 @@ const HomePage: React.FC = () => {
     setIsWarningModalOpen(false);
   };
 
-  const { main: mainModules, advanced: advancedModules, listeningPractice, readingAndWriting } = allLanguageData[lang || 'en'].homePageModules;
+  const { main: mainModules, advanced: advancedModules, listeningPractice, readingAndWriting } = allLanguageData[lang || 'en'].homePageModules; //
 
   // Determina se os módulos avançados estão bloqueados
-  const areAdvancedModulesLocked = !progress.completedReviews[5];
+  const areAdvancedModulesLocked = !progress.completedReviews[5]; //
 
-  // Função para obter imagens da capa (mantida)
+  // Função para obter imagens da capa
   const getCoverImages = () => {
     if (lang === 'en') {
       return {
@@ -133,7 +135,7 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-black pb-20">
-      {/* 6. Renderizar WarningModal */}
+      {/* Renderizar WarningModal */}
       <WarningModal isOpen={isWarningModalOpen} onClose={handleCloseWarningModal} />
 
         <div className="absolute top-4 right-4 z-50">
@@ -183,45 +185,45 @@ const HomePage: React.FC = () => {
                 />
             </section>
 
-            {/* --- Seção 2 (Avançada) --- Remover condição showAdvancedContent */}
+            {/* --- Seção 2 (Avançada) --- */}
             <section className="mb-12 md:mb-20">
                 <SectionTitle>
                     SEGUNDA SESSÃO - FRASES E DIÁLOGOS:
                 </SectionTitle>
                 <ModuleCarousel
-                    modules={advancedModules.map(module => ({ // Mapeia para adicionar isLocked
+                    modules={advancedModules.map(module => ({
                         ...module,
-                        isLocked: areAdvancedModulesLocked // 5. Passa isLocked
+                        isLocked: areAdvancedModulesLocked // Passa isLocked
                     }))}
                     sectionType="howto"
                     onModuleClick={handleModuleClick} // Usa o handleModuleClick modificado
                 />
             </section>
 
-            {/* --- Seção 3 (Avançada) --- Remover condição showAdvancedContent */}
+            {/* --- Seção 3 (Avançada) --- */}
             <section className="mb-12 md:mb-20">
                 <SectionTitle>
                     TERCEIRA SESSÃO – CONVERSAÇÃO NATURAL:
                 </SectionTitle>
                 <ModuleCarousel
-                    modules={listeningPractice.map(module => ({ // Mapeia para adicionar isLocked
+                    modules={listeningPractice.map(module => ({
                         ...module,
-                        isLocked: areAdvancedModulesLocked // 5. Passa isLocked
+                        isLocked: areAdvancedModulesLocked // Passa isLocked
                     }))}
                     sectionType="bonus"
                     onModuleClick={handleModuleClick} // Usa o handleModuleClick modificado
                 />
             </section>
 
-            {/* --- Seção 4 (Avançada) --- Remover condição showAdvancedContent */}
+            {/* --- Seção 4 (Avançada) --- */}
             <section className="mb-12 md:mb-20">
                 <SectionTitle>
                     QUARTA SESSÃO – LEITURA E ESCRITA:
                 </SectionTitle>
                 <ModuleCarousel
-                    modules={readingAndWriting.map(module => ({ // Mapeia para adicionar isLocked
+                    modules={readingAndWriting.map(module => ({
                         ...module,
-                        isLocked: areAdvancedModulesLocked // 5. Passa isLocked
+                        isLocked: areAdvancedModulesLocked // Passa isLocked
                     }))}
                     sectionType="course"
                     onModuleClick={handleModuleClick} // Usa o handleModuleClick modificado
